@@ -30,7 +30,7 @@ export default function App() {
     if (selectedNames.length === 0) return '';
 
     const formattedNames = selectedNames.map(name => `"${name}"`);
-    return `(${formattedNames.join(' OR\n')})`;
+    return `(${formattedNames.join(' OR ')})`;
   }, [count, gender]);
 
   const handleCopy = async () => {
