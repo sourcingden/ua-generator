@@ -1,0 +1,5 @@
+{
+  "name": "Ukrainian Names Boolean Generator",
+  "description": "Generates a formatted boolean search string of top Ukrainian male and female names for easy copying.",
+  "requestFramePermissions": []
+}
