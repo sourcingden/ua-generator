@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Copy, Check, Settings2, Users } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { Copy, Check, Settings2, Users, Briefcase, User } from 'lucide-react';
 import { maleNames, femaleNames } from './data/names';
 
 type Gender = 'male' | 'female' | 'both';
@@ -7,7 +7,14 @@ type Gender = 'male' | 'female' | 'both';
 export default function App() {
   const [count, setCount] = useState<number>(10);
   const [gender, setGender] = useState<Gender>('male');
+  const [jobTitle, setJobTitle] = useState<string>('');
+  const [candidateName, setCandidateName] = useState<string>('');
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const title = [jobTitle, candidateName].filter(Boolean).join(' - ');
+    document.title = title || 'Name Boolean Generator';
+  }, [jobTitle, candidateName]);
 
   const generatedString = useMemo(() => {
     let selectedNames: string[] = [];
@@ -17,11 +24,8 @@ export default function App() {
     } else if (gender === 'female') {
       selectedNames = femaleNames.slice(0, count);
     } else {
-      // For 'both', we take half from each to reach the total count
       const half = Math.ceil(count / 2);
       const otherHalf = count - half;
-      
-      // Interleave them for a better mix, or just concat
       const m = maleNames.slice(0, half);
       const f = femaleNames.slice(0, otherHalf);
       selectedNames = [...m, ...f];
@@ -48,29 +52,64 @@ export default function App() {
       <div className="max-w-3xl mx-auto space-y-8">
         
         {/* Header */}
-        <header className="space-y-2">
-          <div className="inline-flex items-center justify-center p-3 bg-indigo-100 text-indigo-600 rounded-2xl mb-4">
-            <Users size={28} />
+        <header className="space-y-3">
+          <div className="flex items-center gap-4">
+            <div className="inline-flex items-center justify-center p-3 bg-indigo-100 text-indigo-600 rounded-2xl">
+              <Users size={28} />
+            </div>
+            <div className="space-y-0.5">
+              <h1 className="text-4xl font-bold tracking-tight text-zinc-900 font-exo2">
+                {jobTitle || 'Job Title'} {candidateName && `+ ${candidateName}`}
+              </h1>
+              <p className="text-zinc-500 text-lg">
+                Name Boolean Generator
+              </p>
+            </div>
           </div>
-          <h1 className="text-4xl font-semibold tracking-tight text-zinc-900">
-            Name Boolean Generator
-          </h1>
-          <p className="text-zinc-500 text-lg">
-            Generate formatted boolean search strings of top Ukrainian names for sourcing and recruiting.
-          </p>
         </header>
 
         <main className="grid grid-cols-1 md:grid-cols-12 gap-8">
           
           {/* Controls Panel */}
-          <div className="md:col-span-5 space-y-6 bg-white p-6 rounded-3xl shadow-sm border border-zinc-100">
+          <div className="md:col-span-5 space-y-6 bg-white p-6 rounded-3xl shadow-sm border border-zinc-100 h-fit">
             <div className="flex items-center gap-2 text-zinc-800 font-medium pb-2 border-b border-zinc-100">
               <Settings2 size={20} />
               <h2>Configuration</h2>
             </div>
 
+            {/* Inputs */}
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-zinc-700">
+                  <Briefcase size={16} className="text-zinc-400" />
+                  Job Title
+                </label>
+                <input
+                  type="text"
+                  value={jobTitle}
+                  onChange={(e) => setJobTitle(e.target.value)}
+                  placeholder="e.g. Senior Frontend Developer"
+                  className="w-full px-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-zinc-400"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-zinc-700">
+                  <User size={16} className="text-zinc-400" />
+                  Candidate Name
+                </label>
+                <input
+                  type="text"
+                  value={candidateName}
+                  onChange={(e) => setCandidateName(e.target.value)}
+                  placeholder="e.g. Olesia Kovalenko"
+                  className="w-full px-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-zinc-400"
+                />
+              </div>
+            </div>
+
             {/* Gender Selection */}
-            <div className="space-y-3">
+            <div className="space-y-3 pt-4 border-t border-zinc-50">
               <label className="block text-sm font-medium text-zinc-700">
                 Gender
               </label>
@@ -137,7 +176,7 @@ export default function App() {
               <textarea
                 readOnly
                 value={generatedString}
-                className="w-full h-full min-h-[300px] p-5 bg-zinc-900 text-zinc-100 font-mono text-sm rounded-3xl shadow-inner resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/50 leading-relaxed"
+                className="w-full h-full min-h-[400px] p-5 bg-zinc-900 text-zinc-100 font-mono text-sm rounded-3xl shadow-inner resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/50 leading-relaxed"
                 spellCheck={false}
               />
             </div>
